@@ -2,6 +2,10 @@
 
 User-friendly scripts for the Slurm workload manager software
 
+# module files
+
+Example TCL module is included in modulefile, compatible with either [environment modules](http://modules.sourceforge.net/) or [Lmod](https://www.tacc.utexas.edu/research-development/tacc-projects/lmod).  Make sure you change the path to where slurm-helpers is installed.
+
 # Notes
 
 The billing information presented in slurm-about-me and slurm-esitmate-cost is based on a number of assumptions/limitations:
