@@ -1,0 +1,15 @@
+#%Module1.0
+
+proc ModulesHelp { } {
+    puts stderr "Provides some Slurm helper scripts."
+    puts stderr "Currently available scripts:"
+    puts stderr "  slurm-make-hostlist - converts slurm nodelist into other formats"
+}
+
+module-whatis "Provides some Slurm helper scripts."
+
+prepend-path PATH "/mnt/apps/sysapps/slurm-helpers/bin"
+
+if { [ module-info mode load ] } {
+    puts stderr "slurm-helpers"
+}

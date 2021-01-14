@@ -1,0 +1,18 @@
+#%Module1.0
+
+proc ModulesHelp { } {
+    puts stderr "Provides some Slurm helper scripts."
+    puts stderr "Currently available scripts:"
+    puts stderr "  sh-make-hostlist - converts slurm nodelist into other formats (alias slurm-make-hostlist for compatibility with v1)"
+    puts stderr "  sh-about-me - dosplays useful information including your accounts"
+    puts stderr "  sh-estimate-costs - tool to estimate job costs"
+}
+
+module-whatis "Provides some Slurm helper scripts."
+
+prepend-path PATH "/mnt/apps/sysapps/slurm-helpers/bin"
+set-alias "slurm-make-hostlist" "echo This command is deprecated - please use sh-make-hostlist not slurm-make-hostlist >&2; sh-make-hostlist"
+
+if { [ module-info mode load ] } {
+    puts stderr "slurm-helpers"
+}
