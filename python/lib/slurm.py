@@ -25,23 +25,23 @@ import subprocess
 BUDGET_TO_POUNDS_FACTOR=1.0/1e8
 
 def find_account_budget_and_usage(account):
-	"""
-	Finds the budget and total usage so far for an account.
+  """
+  Finds the budget and total usage so far for an account.
 
-	args:
-		account: account to find details for
+  args:
+    account: account to find details for
 
-	returns tuple of (budget, usage)
-	"""
-	# Get the account, account's minutes budget and the usage
-	output = subprocess.run(["sshare", "-A", account, "-P", "-n", "-o", "account,GrpTRESMins,GrpTRESRaw"], capture_output=True, encoding='utf-8')
-	for line in output.stdout.split('\n'):
-		if not len(line):
-			continue # Skip blank lines
-		(account, tres_limit, tres_usage) = line.split('|')
-		tres_limit_dict = dict([i.split('=') for i in tres_limit.split(',')])
-		tres_usage_dict = dict([i.split('=') for i in tres_usage.split(',')])
-		return (int(tres_limit_dict['billing']), int(tres_usage_dict['billing']))
+  returns tuple of (budget, usage)
+  """
+  # Get the account, account's minutes budget and the usage
+  output = subprocess.run(["sshare", "-A", account, "-P", "-n", "-o", "account,GrpTRESMins,GrpTRESRaw"], capture_output=True, encoding='utf-8')
+  for line in output.stdout.split('\n'):
+    if not len(line):
+      continue # Skip blank lines
+    (account, tres_limit, tres_usage) = line.split('|')
+    tres_limit_dict = dict([i.split('=') for i in tres_limit.split(',')])
+    tres_usage_dict = dict([i.split('=') for i in tres_usage.split(',')])
+    return (int(tres_limit_dict['billing']), int(tres_usage_dict['billing']))
 
 def get_partition_info():
   """
