@@ -26,9 +26,9 @@ import argparse
 import getpass
 import grp
 import pwd
-import subprocess
 
-from lib.slurm import find_account_budget_and_usage, BUDGET_TO_POUNDS_FACTOR
+from lib.slurm import capture_subprocess, find_account_budget_and_usage, \
+    BUDGET_TO_POUNDS_FACTOR
 
 def print_user_details(username):
     """
@@ -61,7 +61,7 @@ def print_user_accounts(username):
 
     returns nothing
     """
-    output = subprocess.run(
+    output = capture_subprocess(
         [
             "sshare",
             "-U",
@@ -70,9 +70,6 @@ def print_user_accounts(username):
             "-n",
             "-o", "user,account,GrpTRESMins,GrpTRESRaw",
         ],
-        capture_output=True,
-        encoding='utf-8',
-        check=True,
     )
     account_user_usage = {} # This users usage
     account_usage = {} # The total usage where budget is inherited

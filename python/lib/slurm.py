@@ -24,6 +24,21 @@ import subprocess
 # Amount to multiply budgets by to get pounds
 BUDGET_TO_POUNDS_FACTOR=1.0/1e8
 
+def capture_subprocess(command):
+    """
+    Run the specified command, capturing and returning the output.
+
+    Created as a function to have single point for this boiler-plate
+    code and stop pylint complaining about the arguments to
+    subprocess.run being duplicated code.
+    """
+    return subprocess.run(
+        command,
+        capture_output=True,
+        encoding='utf-8',
+        check=True,
+    )
+
 def find_account_budget_and_usage(account):
     """
     Finds the budget and total usage so far for an account.
@@ -34,7 +49,7 @@ def find_account_budget_and_usage(account):
     returns tuple of (budget, usage)
     """
     # Get the account, account's minutes budget and the usage
-    output = subprocess.run(
+    output = capture_subprocess(
         [
             "sshare",
             "-A", account,
@@ -42,9 +57,6 @@ def find_account_budget_and_usage(account):
             "-n",
             "-o", "account,GrpTRESMins,GrpTRESRaw",
         ],
-        capture_output=True,
-        encoding='utf-8',
-        check=True,
     )
     for line in output.stdout.split('\n'):
         if not line:
@@ -66,15 +78,12 @@ def get_partition_info():
     # Find the cost/node/minute for all partitions (it is one command,
     # one or all does not matter too much - launching the sub-process
     # is the expensive bit of this operation).
-    output = subprocess.run(
+    output = capture_subprocess(
         [
             'scontrol',
             'show', 'partition',
             '--oneline',
         ],
-        capture_output=True,
-        encoding='utf-8',
-        check=True
     )
     part_dict = {}
     for line in output.stdout.split('\n'):
