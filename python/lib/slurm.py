@@ -34,9 +34,20 @@ def find_account_budget_and_usage(account):
     returns tuple of (budget, usage)
     """
     # Get the account, account's minutes budget and the usage
-    output = subprocess.run(["sshare", "-A", account, "-P", "-n", "-o", "account,GrpTRESMins,GrpTRESRaw"], capture_output=True, encoding='utf-8')
+    output = subprocess.run(
+        [
+            "sshare",
+            "-A", account,
+            "-P",
+            "-n",
+            "-o", "account,GrpTRESMins,GrpTRESRaw",
+        ],
+        capture_output=True,
+        encoding='utf-8',
+        check=True,
+    )
     for line in output.stdout.split('\n'):
-        if not len(line):
+        if not line:
             continue # Skip blank lines
         (account, tres_limit, tres_usage) = line.split('|')
         tres_limit_dict = dict([i.split('=') for i in tres_limit.split(',')])
@@ -55,10 +66,19 @@ def get_partition_info():
     # Find the cost/node/minute for all partitions (it is one command,
     # one or all does not matter too much - launching the sub-process
     # is the expensive bit of this operation).
-    output = subprocess.run(['scontrol', 'show', 'partition', '--oneline'], capture_output=True, encoding='utf-8')
+    output = subprocess.run(
+        [
+            'scontrol',
+            'show', 'partition',
+            '--oneline',
+        ],
+        capture_output=True,
+        encoding='utf-8',
+        check=True
+    )
     part_dict = {}
     for line in output.stdout.split('\n'):
-        if not len(line):
+        if not line:
             continue # Skip blank lines
         part_info = dict([i.split('=', 1) for i in line.split(' ')])
         part_dict[part_info['PartitionName']] = part_info
