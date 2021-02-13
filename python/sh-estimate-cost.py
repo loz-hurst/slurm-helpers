@@ -23,11 +23,7 @@
 #pylint: disable=C0111
 
 import argparse
-import getpass
-import grp
-import pwd
 import re
-import subprocess
 import sys
 
 from lib.slurm import get_partition_info, BUDGET_TO_POUNDS_FACTOR
@@ -54,34 +50,68 @@ def print_cost(nodes, duration, partitions=None):
         rem = duration - days*1440
         hours = int(rem / 60)
         minutes = rem - 60*hours
-        billing_weights = dict([i.split('=') for i in part_info[partition]['TRESBillingWeights'].split(',')])
-        cost = int(billing_weights['Node']) * nodes * duration * BUDGET_TO_POUNDS_FACTOR
-        print("Running a %d node job in %s for %dd%02d:%02d will cost approx £%0.2f" %(nodes, partition, days, hours, minutes, cost))
-    
-    
+        billing_weights = dict(
+            [
+                i.split('=') \
+                for i in part_info[partition]['TRESBillingWeights'].split(',')
+            ]
+        )
+        cost = int(billing_weights['Node']) * nodes * duration * \
+               BUDGET_TO_POUNDS_FACTOR
+        print(
+            "Running a %d node job in %s for %dd%02d:%02d will cost"
+            " approx £%0.2f" % (nodes, partition, days, hours, minutes, cost)
+        )
+
+
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Display estimated cost for your job.")
-    parser.add_argument("--partition", "-p", action="append", help="Partition you wish to use (may be specified multiple times for more than 1 partition, default: show price for all partitions).")
-    parser.add_argument("--nodes", "-n", action="store", type=int, default=1, help="Number of nodes you wish to use (default: 1).")
-    parser.add_argument("--duration", "-d", action="store", default='1', help="Estimated duration of your job (format: [Dd]H[:M], e.g. 5d2:26 for 5 days, 2 hours and 26 minutes, default: 1 (= 1 hour)).")
+    parser = argparse.ArgumentParser(
+        description="Display estimated cost for your job."
+    )
+    parser.add_argument(
+        "--partition", "-p",
+        action="append",
+        help="Partition you wish to use (may be specified multiple times for" \
+             " more than 1 partition, default: show price for all" \
+             " partitions).",
+    )
+    parser.add_argument(
+        "--nodes", "-n",
+        action="store",
+        type=int,
+        default=1,
+        help="Number of nodes you wish to use (default: 1).",
+    )
+    parser.add_argument(
+        "--duration", "-d",
+        action="store",
+        default='1',
+        help="Estimated duration of your job (format: [Dd]H[:M], e.g. 5d2:26" \
+             " for 5 days, 2 hours and 26 minutes, default: 1 (= 1 hour)).",
+    )
 
     args = parser.parse_args()
 
-    time_regx = re.compile(r'^(:?(?P<days>[0-9]+)d)?(?P<hours>[0-9]+)(:?:(?P<minutes>[0-9]+))?$')
+    time_regx = re.compile(
+        r'^(:?(?P<days>[0-9]+)d)?(?P<hours>[0-9]+)(:?:(?P<minutes>[0-9]+))?$'
+    )
     match = time_regx.match(args.duration)
     if not match:
-        print("Error parsing duration, please check it is in the right format.", file=sys.stderr)
+        print(
+            "Error parsing duration, please check it is in the right format.",
+            file=sys.stderr,
+        )
         parser.print_help(file=sys.stderr)
         sys.exit(1)
     else:
         # Hours are mandatory, so start with that value
-        duration = 60 * int(match['hours'])
+        job_duration = 60 * int(match['hours'])
         # ...plus days
         if match['days'] is not None:
-            duration += 1440 * int(match['days'])  # 1,440 = 24 hours * 60 minutes
+            # 1,440 = 24 hours * 60 minutes
+            job_duration += 1440 * int(match['days'])
         # ...plus minutes
         if match['minutes'] is not None:
-            duration += int(match['minutes'])
+            job_duration += int(match['minutes'])
 
-    print_cost(args.nodes, duration, args.partition)
-
+    print_cost(args.nodes, job_duration, args.partition)
