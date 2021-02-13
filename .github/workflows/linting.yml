@@ -6,7 +6,7 @@ on:
   push:
     branches: [ main ]
   pull_request:
-  	branches: [ main ]
+    branches: [ main ]
 
 # What will the workflow do?  Jobs can run sequentially or in prallel
 jobs:
@@ -24,7 +24,7 @@ jobs:
         with:
           # This is why we split bash scripts to their own directory
           path: "bash"
- 
+
       # Python linting
       - name: Python linter
         uses: cclauss/GitHub-Action-for-pylint@0.7.0
