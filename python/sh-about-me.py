@@ -58,7 +58,7 @@ def print_user_accounts(username):
 
     args:
         username: user to print accounts for
-    
+
     returns nothing
     """
     output = subprocess.run(
@@ -89,7 +89,7 @@ def print_user_accounts(username):
             ])
             account_usage[account] = int(tres['billing'])
             account_budget[account] = int(user_budget_dict['billing'])
-    for account in account_user_usage.keys():
+    for account in account_user_usage:
         if account not in account_budget:
             (account_budget[account], account_usage[account]) = \
                 find_account_budget_and_usage(account)

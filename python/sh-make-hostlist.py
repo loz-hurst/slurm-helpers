@@ -52,7 +52,7 @@ def expand_nodelist(nodelist):
         Takes a prefix, range and suffix and generates a list of all
         node names in that range.
         """
-        if len(ranges):
+        if ranges:
             # multiple nodes to add
             result = []
             for range_ in ranges.split(','):
@@ -72,13 +72,13 @@ def expand_nodelist(nodelist):
                     # Simple substitution
                     result.append(''.join((prefix, range_, suffix)))
             return result
-        else:
-            if len(suffix):
-                raise RuntimeError(
-                    "No range but seperate prefix and suffix - this is not"
-                    " a valid state."
-                )
-            return([prefix])
+
+        if suffix:
+            raise RuntimeError(
+                "No range but seperate prefix and suffix - this is not"
+                " a valid state."
+            )
+        return [prefix]
 
     for ch in nodelist:
         if in_brace:
@@ -92,7 +92,7 @@ def expand_nodelist(nodelist):
                 )
         else:
             if ch == '[':
-                if len(ranges):
+                if ranges:
                     raise RuntimeError(
                         "Cannot cope with multiple ranges per node, yet (but I"
                         " do not think slurm ever does that anyway).  Node"
@@ -129,7 +129,7 @@ def expand_task_counts(tasklist):
         if '(x' in part:
             base = part[:part.find('(')]
             number = part[part.find('(')+2:part.find(')')]
-            for i in range(int(number)):
+            for _ in range(int(number)):
                 counts.append(int(base))
         else:
             counts.append(int(part))
@@ -220,7 +220,7 @@ if __name__ == '__main__':
     formatters = find_formatters()
     if args.list_formatters:
         print("All supported formatters:")
-        for formatter in formatters.keys():
+        for formatter in formatters:
             print(formatter)
         sys.exit(0)
 
