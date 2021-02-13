@@ -1,0 +1,33 @@
+name: Linting
+
+# When will the action run?
+on:
+  # Push or pull request events but on for branch 'main'
+  push:
+    branches: [ main ]
+  pull_request:
+  	branches: [ main ]
+
+# What will the workflow do?  Jobs can run sequentially or in prallel
+jobs:
+  # This workflow is a single job called 'lint'
+  lint:
+    # Type of runner to run on
+    runs-on: ubuntu-latest
+    steps:
+      # Checks out the repository to $GITHUB_WORKSPACE
+      - uses: actions/checkout@v2
+
+      # Shell linting
+      - name: Shell linter
+        uses: azohra/shell-linter@v0.4.0
+        with:
+          # This is why we split bash scripts to their own directory
+          path: "bash"
+ 
+      # Python linting
+      - name: Python linter
+        uses: cclauss/GitHub-Action-for-pylint@0.7.0
+        with:
+          # 'python' is the path to our python files
+          args: "pylint python"
